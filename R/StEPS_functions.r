@@ -164,7 +164,7 @@ FMGM_StEPS	<- function(data, ind_disc, group, lambda_list, with_prior=FALSE, pri
 			sub_list	<- suppressWarnings(make_MGM_list(X[subsample,,drop=FALSE], Y[subsample,,drop=FALSE], group[subsample])) ;
 			
 			lambda	<- lambda_list[d] ;
-			sub_res		<- learn_tb(sub_list, lambda_intra_np=rep(lambda, 3), lambda_inter=rep(lambda, 3), 
+			sub_res		<- learn_tb(sub_list, lambda_intra=rep(lambda, 3), lambda_inter=rep(lambda, 3), 
 										with_prior=FALSE, wp=NULL, ..., cores=cores, verbose=verbose) ;
 			
 			add_skeleton(sub_res, inst_temp, tol_polish, cores) ;
