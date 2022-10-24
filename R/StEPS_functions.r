@@ -42,7 +42,9 @@ FMGM_StEPS	<- function(data, ind_disc, group, lambda_list, with_prior=FALSE, pri
 	if (with_prior & (is.null(prior_list) | length(prior_list) == 0)) {
 		stop("No prior provided") ;
 	}
-							
+
+	options(bigmemory.allow.dimnames=TRUE) ;
+	
 	sample_common	<- intersect(rownames(data), names(group)) ;
 	
 	X	<- data[,-ind_disc,drop=FALSE] ;
