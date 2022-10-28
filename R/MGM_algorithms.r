@@ -221,8 +221,6 @@ g_fun	<- function(MGM_list, t, lambda_intra, lambda_intra_prior=NULL, lambda_int
 	G	<- length(MGM_list) ;
 	if (G >= 2) grpind_pair	<- combn(G, 2) ;
 	
-	rm(X, Y, Y_dummy) ;
-	
 	penalty	<- 0 ;
 	
 	# Beta
@@ -739,8 +737,6 @@ g_pen	<- function(MGM_list, lambda_intra, lambda_intra_prior=NULL, lambda_inter,
 	
 	G	<- length(MGM_list) ;
 	if (G >= 2) grpind_pair	<- combn(G, 2) ;
-	
-	rm(X, Y, Y_dummy) ;
 	
 	penalty	<- 0 ;
 	
