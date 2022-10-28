@@ -29,7 +29,7 @@ require(biganalytics) ;
 #' @return The resulting networks, in the form of a list of MGMs
 #' @export
 FMGM_StEPS	<- function(data, ind_disc, group, lambda_list, with_prior=FALSE, prior_list=NULL, 
-						N=20, b, gamma=.05, perm=10000, eps=.05, tol_polish=1e-12, ..., cores=parallel::detectCores(), verbose=FALSE) {
+						N=20, b=NULL, gamma=.05, perm=10000, eps=.05, tol_polish=1e-12, ..., cores=parallel::detectCores(), verbose=FALSE) {
 
 	if (is.null(rownames(data)) | is.null(names(group))) {
 		stop("Please provide sample names for data or group variable!") ;
@@ -51,11 +51,11 @@ FMGM_StEPS	<- function(data, ind_disc, group, lambda_list, with_prior=FALSE, pri
 	Y	<- data[, ind_disc,drop=FALSE] ;
 	
 	n	<- length(sample_common) ;
-	if (!missing(b) & (b >= length(sample_common))) stop("Provided size of the subsamples provided should be smaller than the number of total samples") ;
+	if (!is.null(b) & (b >= length(sample_common))) stop("Provided size of the subsamples provided should be smaller than the number of total samples") ;
 	
 	orig_list	<- make_MGM_list(X, Y, group) ;
 	
-	if (missing(b)) {
+	if (is.null(b)) {
 		b	<- min(ceiling(10*sqrt(n)), ceiling(n*.8)) ;
 	}
 	
