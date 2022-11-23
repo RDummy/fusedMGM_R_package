@@ -5,16 +5,21 @@
 \title{Main function of fused MGM}
 \usage{
 FMGM_mc(
-  X,
-  Y,
+  data,
+  ind_disc,
   group,
   t = 1,
   L = NULL,
-  eta = 1.1,
+  eta = 2,
   lambda_intra,
+  lambda_intra_prior = NULL,
   lambda_inter,
+  with_prior = FALSE,
+  prior_list = NULL,
+  converge_by_edge = TRUE,
+  tol_edge = 3,
   tol_mgm = 1e-04,
-  tol_g = 1e-04,
+  tol_g = 0.005,
   tol_fpa = 1e-12,
   maxit = 1e+06,
   polish = TRUE,
@@ -24,6 +29,10 @@ FMGM_mc(
 )
 }
 \arguments{
+\item{data}{Data frame with rows as observations and columns as variables}
+
+\item{ind_disc}{Indices of discrete variables}
+
 \item{group}{Group indices, must be provided with the observation names}
 
 \item{t}{Numeric. Initial value of coefficient that reflect 2 previous iterations in fast proximal gradient method. Default: 1}
@@ -34,7 +43,15 @@ FMGM_mc(
 
 \item{lambda_intra}{Vector with 3 numeric variables. Penalization parameters for network edge weights}
 
+\item{lambda_intra_prior}{Vector with 3 numeric variables. Penalization parameters for network edge weights, applied to the edges with prior information}
+
 \item{lambda_inter}{Vector with 3 numeric variables. Penalization parameters for network edge weight differences}
+
+\item{with_prior}{Logical. Is prior information provided? Default: FALSE}
+
+\item{prior_list}{List of prior information. Each element must be a 3-column data frames, with the 1st and the 2nd columns being variable names and the 3rd column being prior confidence (0,1)}
+
+\item{tol_edge}{Integer. Number of consecutive iterations of convergence to stop the iteration. Default: 3}
 
 \item{tol_mgm}{Numeric. Cutoff of network edge RMSD for convergence. Default: 1e-04}
 
@@ -52,19 +69,7 @@ FMGM_mc(
 
 \item{verbose}{Logical. If TRUE, the procedures are reported in real-time manner. Default: FALSE}
 
-\item{data}{Data frame with rows as observations and columns as variables}
-
-\item{ind_disc}{Indices of discrete variables}
-
-\item{lambda_intra_prior}{Vector with 3 numeric variables. Penalization parameters for network edge weights, applied to the edges with prior information}
-
-\item{with_prior}{Logical. Is prior information provided? Default: FALSE}
-
-\item{prior_list}{List of prior information. Each element must be a 3-column data frames, with the 1st and the 2nd columns being variable names and the 3rd column being prior confidence (0,1)}
-
 \item{convergence_by_edge}{Logical. The convergence should be judged by null differences of network edges after iteration. If FALSE, the rooted mean square difference (RMSD) of edge weights is used. Default: TRUE}
-
-\item{tol_edge}{Integer. Number of consecutive iterations of convergence to stop the iteration. Default: 3}
 }
 \value{
 The resulting networks, in the form of a list of MGMs

@@ -12,7 +12,7 @@ FMGM_StEPS(
   with_prior = FALSE,
   prior_list = NULL,
   N = 20,
-  b,
+  b = NULL,
   gamma = 0.05,
   perm = 10000,
   eps = 0.05,
