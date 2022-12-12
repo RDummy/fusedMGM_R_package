@@ -51,7 +51,7 @@ FMGM_StEPS	<- function(data, ind_disc, group, lambda_list, with_prior=FALSE, pri
 	Y	<- data[, ind_disc,drop=FALSE] ;
 	
 	n	<- length(sample_common) ;
-	if (!is.null(b) & (b >= length(sample_common))) stop("Provided size of the subsamples provided should be smaller than the number of total samples") ;
+	if (!is.null(b) && (b >= length(sample_common))) stop("Provided size of the subsamples provided should be smaller than the number of total samples") ;
 	
 	orig_list	<- make_MGM_list(X, Y, group) ;
 	
