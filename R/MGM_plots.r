@@ -29,7 +29,7 @@ FMGM_plot <- function(MGM_list, sortby="diff", highlight=c(),
 					verbose = getOption("verbose")) {
 					
 	# Make each MGM into a single norm matrix
-	skel_MGM	<- MGMlist_to_skeleton(MGM_list) ;
+	skel_MGM	<- MGMlist_to_plotskel(MGM_list) ;
 	MGM_intra_1	<- skel_MGM$intra[[1]] ;
 	MGM_intra_2	<- skel_MGM$intra[[2]] ;
 	MGM_inter	<- skel_MGM$inter[[1]] ;
@@ -204,7 +204,7 @@ FMGM_plot <- function(MGM_list, sortby="diff", highlight=c(),
 
 # Convert an MGM to a skeleton network
 # Applied to inter-node elements only
-MGM_to_skeleton		<- function(MGM_input, tol_polish=1e-12) {
+MGM_to_plotskel		<- function(MGM_input, tol_polish=1e-12) {
 	X		<- MGM_input$Continuous ;
 	Y		<- MGM_input$Discrete ;
 	Y_dummy	<- MGM_input$Dummy ;
@@ -279,7 +279,7 @@ MGM_to_skeleton		<- function(MGM_input, tol_polish=1e-12) {
 }
 
 # Indicate edges with differetial interactions between 2 MGMs
-MGM_to_skel_diff	<- function(MGM_1, MGM_2, tol_polish=1e-12) {
+MGM_to_plotskel_diff	<- function(MGM_1, MGM_2, tol_polish=1e-12) {
 	X		<- MGM_1$Continuous ;
 	Y		<- MGM_1$Discrete ;
 	Y_dummy	<- MGM_1$Dummy ;
@@ -360,12 +360,12 @@ MGM_to_skel_diff	<- function(MGM_1, MGM_2, tol_polish=1e-12) {
 # Make skeleton networks for an MGM list
 # Intra: skeleton for edges in each of the MGM
 # Inter: skeleton for the differences between the MGMs
-MGMlist_to_skeleton	<- function(learn_res, tol_polish=1e-12) {
+MGMlist_to_plotskel	<- function(learn_res, tol_polish=1e-12) {
 	G	<- length(learn_res) ;
 	skeleton_out	<- vector("list", G) ;
 	
 	for (g in seq(G)) {
-		skeleton_out[[g]]	<- MGM_to_skeleton(learn_res[[g]], tol_polish) ;
+		skeleton_out[[g]]	<- MGM_to_plotskel(learn_res[[g]], tol_polish) ;
 	}
 	
 	skel_diff_out	<- vector("list", choose(G,2)) ;
@@ -373,7 +373,7 @@ MGMlist_to_skeleton	<- function(learn_res, tol_polish=1e-12) {
 	for (g2 in seq(2,G)) {
 		for (g1 in seq(1,g2-1)) {
 			skel_diff_out[[sum(0,g2-2) + g1]]	<-  
-				MGM_to_skel_diff(learn_res[[g1]], learn_res[[g2]], tol_polish) ;
+				MGM_to_plotskel_diff(learn_res[[g1]], learn_res[[g2]], tol_polish) ;
 		}
 	}
 	
