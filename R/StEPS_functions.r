@@ -109,16 +109,26 @@ FMGM_StEPS	<- function(data, ind_disc, group, lambda_list, with_prior=FALSE, pri
 	
 	if (with_prior) {
 	
+		for (k in seq_along(prior_list)) {
+			match_1 <- !is.na(match(prior_list[[k]][[1]], colnames(data))) ;
+			match_2 <- !is.na(match(prior_list[[k]][[2]], colnames(data))) ;
+			
+			prior_list[[k]] <- prior_list[[k]][match_1 & match_2,] ;
+                }
+		
 		# Make information array
 		info_tmp	<- make_net_tmp(data, length(prior_list)) ;
 		
 		# Put information to the big.matrix
 		for (k in seq_along(prior_list)) {
 			prior_info	<- prior_list[[k]] ;
-			for (j in seq(nrow(prior_info))) {
-				ind_1	<- match(prior_list[[k]][j,1], colnames(data)) ;
-				ind_2	<- match(prior_list[[k]][j,2], colnames(data)) ;
-				info_tmp[[k]][ind_1,ind_2]	<- info_tmp[[k]][ind_2,ind_1]	<- prior_list[[k]][j,3] ;
+			
+			if (nrow(prior_info) > 0) {
+				for (j in seq(nrow(prior_info))) {
+					ind_1	<- match(prior_list[[k]][j,1], colnames(data)) ;
+					ind_2	<- match(prior_list[[k]][j,2], colnames(data)) ;
+					info_tmp[[k]][ind_1,ind_2]	<- info_tmp[[k]][ind_2,ind_1]	<- prior_list[[k]][j,3] ;
+				}
 			}
 		}
 	
@@ -401,16 +411,21 @@ FMGM_StEPS	<- function(data, ind_disc, group, lambda_list, with_prior=FALSE, pri
 		
 		for (k in seq_along(prior_list)) {
 			prior_info	<- prior_list[[k]] ;
-			for (j in seq(nrow(prior_info))) {
-				ind_1	<- match(prior_info[j,1], colnames(net_sum_1)) ;
-				ind_2	<- match(prior_info[j,2], colnames(net_sum_2)) ;
-				
-				src_conf_1[k]	<- src_conf_1[k] + abs(N*prior_info[j,3] - net_sum_1[ind_1,ind_2]/J) ;
-				src_conf_2[k]	<- src_conf_2[k] + abs(N*prior_info[j,3] - net_sum_2[ind_1,ind_2]/J) ;
-			}
 			
-			src_conf_1[k]	<- src_conf_1[k] / nrow(prior_info) ;
-			src_conf_2[k]	<- src_conf_2[k] / nrow(prior_info) ;
+			if (nrow(prior_info) > 0) {
+				for (j in seq(nrow(prior_info))) {
+					ind_1	<- match(prior_info[j,1], colnames(net_sum_1)) ;
+					ind_2	<- match(prior_info[j,2], colnames(net_sum_2)) ;
+
+					src_conf_1[k]	<- src_conf_1[k] + abs(N*prior_info[j,3] - net_sum_1[ind_1,ind_2]/J) ;
+					src_conf_2[k]	<- src_conf_2[k] + abs(N*prior_info[j,3] - net_sum_2[ind_1,ind_2]/J) ;
+				}
+
+				src_conf_1[k]	<- src_conf_1[k] / nrow(prior_info) ;
+				src_conf_2[k]	<- src_conf_2[k] / nrow(prior_info) ;
+			} else {
+				src_conf_1[k]	<- src_conf_2[k]	<- Inf;
+			}
 		}
 
 		# Permute & re-calculate the confidences
@@ -423,21 +438,24 @@ FMGM_StEPS	<- function(data, ind_disc, group, lambda_list, with_prior=FALSE, pri
 		for (pp in seq(perm)) {
 			for (k in seq_along(prior_list)) {
 				prior_info		<- prior_list[[k]] ;
-				ind_permuted	<- sample(seq(nrow(prior_info)), nrow(prior_info), replace=FALSE) ;
 				
-				for (j in seq(nrow(prior_info))) {
-	#				ind_1	<- match(prior_info[ind_permuted[j],1], colnames(net_sum_1)) ;
-	#				ind_2	<- match(prior_info[ind_permuted[j],2], colnames(net_sum_1)) ;
+				if (nrow(prior_info) > 0) {
+					ind_permuted	<- sample(seq(nrow(prior_info)), nrow(prior_info), replace=FALSE) ;
 
-					ind_1	<- data_ind[1,ind_permuted[j]] ;
-					ind_2	<- data_ind[2,ind_permuted[j]] ;
-					
-					src_mat_1[pp,k]	<- src_mat_1[pp,k] + abs(N*prior_info[j,3] - net_sum_1[ind_1,ind_2]/J) ;
-					src_mat_2[pp,k]	<- src_mat_2[pp,k] + abs(N*prior_info[j,3] - net_sum_2[ind_1,ind_2]/J) ;
+					for (j in seq(nrow(prior_info))) {
+		#				ind_1	<- match(prior_info[ind_permuted[j],1], colnames(net_sum_1)) ;
+		#				ind_2	<- match(prior_info[ind_permuted[j],2], colnames(net_sum_1)) ;
+
+						ind_1	<- data_ind[1,ind_permuted[j]] ;
+						ind_2	<- data_ind[2,ind_permuted[j]] ;
+
+						src_mat_1[pp,k]	<- src_mat_1[pp,k] + abs(N*prior_info[j,3] - net_sum_1[ind_1,ind_2]/J) ;
+						src_mat_2[pp,k]	<- src_mat_2[pp,k] + abs(N*prior_info[j,3] - net_sum_2[ind_1,ind_2]/J) ;
+					}
+
+					src_mat_1[pp,k]	<- src_mat_1[pp,k] / nrow(prior_info) ;
+					src_mat_2[pp,k]	<- src_mat_2[pp,k] / nrow(prior_info) ;
 				}
-				
-				src_mat_1[pp,k]	<- src_mat_1[pp,k] / nrow(prior_info) ;
-				src_mat_2[pp,k]	<- src_mat_2[pp,k] / nrow(prior_info) ;
 			}
 		}
 		
