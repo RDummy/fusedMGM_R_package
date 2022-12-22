@@ -278,6 +278,14 @@ FMGM_mc	<- function(data, ind_disc, group, t=1, L=NULL, eta=2, lambda_intra, lam
 	data	<- cbind(X,Y) ;
 	
 	if (with_prior) {
+		
+		for (k in seq_along(prior_list)) {
+			match_1 <- !is.na(match(prior_list[[k]][[1]], colnames(data))) ;
+			match_2 <- !is.na(match(prior_list[[k]][[2]], colnames(data))) ;
+			
+			prior_list[[k]] <- prior_list[[k]][match_1 & match_2,] ;
+                }
+		
 		# Make information array
 		info_tmp	<- make_net_tmp(data, length(prior_list)) ;
 		
