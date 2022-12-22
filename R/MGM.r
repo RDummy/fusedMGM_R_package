@@ -313,7 +313,7 @@ FMGM_mc	<- function(data, ind_disc, group, t=1, L=NULL, eta=2, lambda_intra, lam
 	}
 	
 	learn_res	<- learn_tb(MGM_list, t, L, eta, lambda_intra, lambda_intra_prior, lambda_inter,
-						with_prior, prior_list, converge_by_edge, tol_edge,
+						with_prior, wp, converge_by_edge, tol_edge,
 						tol_mgm, tol_g, tol_fpa, tol_polish, maxit, cores, verbose) ;
 	
 	if (polish) {
