@@ -903,7 +903,7 @@ g_pen	<- function(MGM_list, lambda_intra, lambda_intra_prior=NULL, lambda_inter,
 learn_tb	<- function(MGM_list, t=1, L=NULL, eta=2, lambda_intra, lambda_intra_prior=NULL, lambda_inter,
 			       			with_prior=FALSE, wp=NULL, converge_by_edge=TRUE, tol_edge=3,
 						tol_mgm=1e-04, tol_g=5e-03, tol_fpa=1e-12, tol_polish=1e-12, maxit=1000000, cores, verbose=FALSE) {
-	L_miss	<- missing(L) ;
+	L_miss	<- missing(L) || is.null(L) ;
 	G	<- length(MGM_list) ;
 	n_tot	<- sum(sapply(MGM_list, function(MGM) nrow(MGM$Continuous)))
 	
