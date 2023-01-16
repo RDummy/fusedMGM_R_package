@@ -318,7 +318,7 @@ FMGM_mc	<- function(data, ind_disc, group, t=1, L=NULL, eta=2, lambda_intra, lam
 	
 	if (polish) {
 		if (verbose) print("Dropping weak interactions under the given threshold") ;
-		polish_MGM_list(learn_res, tol_polish) ;
+		polish_MGM_list(learn_res, tol_polish, cores) ;
 	}
 	
 	return(learn_res) ;
