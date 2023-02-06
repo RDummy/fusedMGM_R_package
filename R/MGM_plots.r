@@ -36,10 +36,15 @@ FMGM_plot <- function(MGM_list, sortby="diff", highlight=c(),
 	
 	rm(skel_MGM) ;
 	
-	p_x	<- ncol(MGM_list[[1]]$Continuous) ;
-	p_y	<- ncol(MGM_list[[1]]$Discrete) ;
+	X	<- MGM_list[[1]]$Continuous ;
+	Y	<- MGM_list[[1]]$Discrete ;
+	
+	p_x	<- ncol(X) ;
+	p_y	<- ncol(Y) ;
 	n	<- p_x + p_y ;
 	varlist	<- c(colnames(X), colnames(Y)) ;
+	
+	rm(X, Y) ;
 	
 	if (!isFALSE(sideColor)) {
 		if (is.null(sideColor)) {
