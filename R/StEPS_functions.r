@@ -45,15 +45,23 @@ FMGM_StEPS	<- function(data, ind_disc, group, lambda_list, with_prior=FALSE, pri
 
 	options(bigmemory.allow.dimnames=TRUE) ;
 	
-	sample_common	<- intersect(rownames(data), names(group)) ;
-	
 	X	<- data[,-ind_disc,drop=FALSE] ;
 	Y	<- data[, ind_disc,drop=FALSE] ;
 	
+	orig_list	<- make_MGM_list(X, Y, group) ;
+			
+	G	<- length(orig_list) ;
+	inst_temp	<- make_inst_tmp(orig_list) ;
+	
+	X	<- rbind(orig_list[[1]]$Continuous[], orig_list[[2]]$Continuous[]) ;
+	Y	<- rbind(orig_list[[1]]$Discrete[],   orig_list[[2]]$Discrete[]) ;
+	p_x	<- ncol(X) ;	p_y	<- ncol(Y) ;	pq	<- p_x + p_y ;
+	rownames(Y)	<- rownames(X) ;
+	data	<- cbind(X,Y) ;
+	
+	sample_common	<- intersect(rownames(data), names(group)) ;
 	n	<- length(sample_common) ;
 	if (!is.null(b) && (b >= length(sample_common))) stop("Provided size of the subsamples provided should be smaller than the number of total samples") ;
-	
-	orig_list	<- make_MGM_list(X, Y, group) ;
 	
 	if (is.null(b)) {
 		b	<- min(ceiling(10*sqrt(n)), ceiling(n*.8)) ;
@@ -97,15 +105,6 @@ FMGM_StEPS	<- function(data, ind_disc, group, lambda_list, with_prior=FALSE, pri
 	}
 
 	res_table	<- matrix(0, nrow=length(lambda_list), ncol=6) ;
-		
-	G	<- length(orig_list) ;
-	inst_temp	<- make_inst_tmp(orig_list) ;
-	
-	X	<- rbind(orig_list[[1]]$Continuous[], orig_list[[2]]$Continuous[]) ;
-	Y	<- rbind(orig_list[[1]]$Discrete[],   orig_list[[2]]$Discrete[]) ;
-	p_x	<- ncol(X) ;	p_y	<- ncol(Y) ;	pq	<- p_x + p_y ;
-	rownames(Y)	<- rownames(X) ;
-	data	<- cbind(X,Y) ;
 	
 	if (with_prior) {
 	
