@@ -53,15 +53,18 @@ FMGM_StEPS	<- function(data, ind_disc, group, lambda_list, with_prior=FALSE, pri
 	G	<- length(orig_list) ;
 	inst_temp	<- make_inst_tmp(orig_list) ;
 	
-	X	<- rbind(orig_list[[1]]$Continuous[], orig_list[[2]]$Continuous[]) ;
-	Y	<- rbind(orig_list[[1]]$Discrete[],   orig_list[[2]]$Discrete[]) ;
-	p_x	<- ncol(X) ;	p_y	<- ncol(Y) ;	pq	<- p_x + p_y ;
-	rownames(Y)	<- rownames(X) ;
-	data	<- cbind(X,Y) ;
+	X_use	<- rbind(orig_list[[1]]$Continuous[], orig_list[[2]]$Continuous[]) ;
+	Y_use	<- rbind(orig_list[[1]]$Discrete[],   orig_list[[2]]$Discrete[]) ;
+	p_x	<- ncol(X_use) ;	p_y	<- ncol(Y_use) ;	pq	<- p_x + p_y ;
+	rownames(Y_use)	<- rownames(X_use) ;
+	data_use	<- cbind(X_use,Y_use) ;
 	
-	sample_common	<- intersect(rownames(data), names(group)) ;
+	sample_common	<- intersect(rownames(data_use), names(group)) ;
 	n	<- length(sample_common) ;
 	if (!is.null(b) && (b >= length(sample_common))) stop("Provided size of the subsamples provided should be smaller than the number of total samples") ;
+	
+	X	<- X[sample_common,] ;
+	Y	<- Y[sample_common,] ;
 	
 	if (is.null(b)) {
 		b	<- min(ceiling(10*sqrt(n)), ceiling(n*.8)) ;
