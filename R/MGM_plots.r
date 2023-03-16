@@ -190,12 +190,16 @@ FMGM_plot <- function(MGM_list, sortby="diff", highlight=c(),
 	par(mar=c(margins[1L], 0.25, 0.25, margins[2L])) ;
 	image(1L:2L, 1L:2L, matrix(c(0,0,0,0), nrow=2), col="white",
 		axes=FALSE, xlab="", ylab="", xlim=c(0,2), ylim=c(0,2)) ;
-	polygon(c(0,0,2,2), c(0,2,2,0)) ;
-	abline(v=1) ; abline(h=1) ;
-	text(c(0.5,0.5,1.5), c(1.5,0.5,1.5), labels=c("Diff", "1", "2")) ;
-	legend(1.5, 0.5, if (exists("sdInd")) sdInd else seq(length(unique(sideColor))),
-		col = seq(length(unique(sideColor))), pch = 15,
-		adj = 0.5, bty = "n", xjust=.5, yjust=.5) ;
+	polygon(c(0.05,0.05,0.95,0.95), c(0.05,0.95,0.95,0.05)) ;
+        polygon(c(1.05,1.05,1.95,1.95), c(0.05,0.95,0.95,0.05)) ;
+        polygon(c(0.05,0.05,0.95,0.95), c(1.05,1.95,1.95,1.05)) ;
+        polygon(c(1.05,1.05,1.95,1.95), c(1.05,1.95,1.95,1.05)) ;
+#       abline(v=1) ; abline(h=1) ;
+        text(c(0.5,0.5,1.5), c(1.5,0.5,1.5),
+             labels=c("Network\ndifference", "Network in\ngroup 1", "Network in\ngroup 2"), cex=2*cexRow) ;
+        legend(1.5, 0.5, if (exists("sdInd")) sdInd else seq(length(unique(sideColor))),
+                col = seq(length(unique(sideColor))), pch = 15,
+                adj = 0.5, bty = "n", xjust=.5, yjust=.5, cex=1.5*cexRow) ;
 	
 	
 	if (!is.null(main)) {
