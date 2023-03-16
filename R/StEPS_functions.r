@@ -224,7 +224,7 @@ FMGM_StEPS	<- function(data, ind_disc, group, lambda_list, with_prior=FALSE, pri
 				return_tmp	<- 0 ;
 				
 				for (g in seq(G)) {
-					if (wp[var1,var2] != 1) return_tmp	<- return_tmp + inst_temp$beta_sum[[g]][s1,s2] ;
+					if (!with_prior || wp[var1,var2] != 1) return_tmp	<- return_tmp + inst_temp$beta_sum[[g]][s1,s2] ;
 				}
 				
 				return(return_tmp) ;
@@ -265,7 +265,7 @@ FMGM_StEPS	<- function(data, ind_disc, group, lambda_list, with_prior=FALSE, pri
 				return_tmp	<- 0 ;
 				
 				for (g in seq(G)) {
-					if (wp[var1,var2] != 1) {
+					if (!with_prior || wp[var1,var2] != 1) {
 						inst_temp$rho_sum[[g]][r,s]	<- inst_temp$rho_sum[[g]][r,s] / N ;
 						inst_temp$rho_sum[[g]][r,s]	<- inst_temp$rho_sum[[g]][r,s] * (1 - inst_temp$rho_sum[[g]][r,s]) ;
 					
@@ -316,7 +316,7 @@ FMGM_StEPS	<- function(data, ind_disc, group, lambda_list, with_prior=FALSE, pri
 				return_tmp	<- 0 ;
 				
 				for (g in seq(G)) {
-					if (wp[var1,var2] != 1) {
+					if (!with_prior || wp[var1,var2] != 1) {
 						inst_temp$phi_sum[[g]][s1,s2]	<- inst_temp$phi_sum[[g]][s1,s2] / N ;
 						inst_temp$phi_sum[[g]][s1,s2]	<- inst_temp$phi_sum[[g]][s1,s2] * (1 - inst_temp$phi_sum[[g]][s1,s2]) ;
 						
