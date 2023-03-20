@@ -166,6 +166,11 @@ FMGM_StEPS	<- function(data, ind_disc, group, lambda_list, with_prior=FALSE, pri
 		np_bytype[1]	<- p_x*(p_x-1)/2 - wp_bytype[1] ;
 		np_bytype[2]	<- (p_x)*(p_y)   - wp_bytype[2] ;
 		np_bytype[3]	<- p_y*(p_y-1)/2 - wp_bytype[3] ;
+	} else {
+		np_bytype	<- numeric(3) ;
+		np_bytype[1]	<- p_x*(p_x-1)/2 ;
+		np_bytype[2]	<- (p_x)*(p_y) ;
+		np_bytype[3]	<- p_y*(p_y-1)/2 ;
 	}
 	
 	# Make estimation array
