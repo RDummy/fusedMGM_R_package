@@ -53,8 +53,8 @@ FMGM_StEPS	<- function(data, ind_disc, group, lambda_list, with_prior=FALSE, pri
 	G	<- length(orig_list) ;
 	inst_temp	<- make_inst_tmp(orig_list) ;
 	
-	X_use	<- rbind(orig_list[[1]]$Continuous[], orig_list[[2]]$Continuous[]) ;
-	Y_use	<- rbind(orig_list[[1]]$Discrete[],   orig_list[[2]]$Discrete[]) ;
+	X_use	<- if (G == 2) rbind(orig_list[[1]]$Continuous[], orig_list[[2]]$Continuous[]) else orig_list[[1]]$Continuous[] ;
+	Y_use	<- if (G == 2) rbind(orig_list[[1]]$Discrete[],   orig_list[[2]]$Discrete[])   else orig_list[[1]]$Discrete[]  ;
 	p_x	<- ncol(X_use) ;	p_y	<- ncol(Y_use) ;	pq	<- p_x + p_y ;
 	rownames(Y_use)	<- rownames(X_use) ;
 	data_use	<- cbind(X_use,Y_use) ;
@@ -107,7 +107,7 @@ FMGM_StEPS	<- function(data, ind_disc, group, lambda_list, with_prior=FALSE, pri
 		N	<- nrow(sub_index) ;
 	}
 
-	res_table	<- matrix(0, nrow=length(lambda_list), ncol=6) ;
+	res_table	<- matrix(0, nrow=length(lambda_list), ncol=if (G>1) 6 else 3) ;
 	
 	if (with_prior) {
 	
@@ -205,12 +205,14 @@ FMGM_StEPS	<- function(data, ind_disc, group, lambda_list, with_prior=FALSE, pri
 					inst_temp$beta_sum[[g]][s1,s2]	<- inst_temp$beta_sum[[g]][s1,s2] * (1 - inst_temp$beta_sum[[g]][s1,s2]) ;
 				}
 				
-				for (g2 in seq(2,G)) {
-					for (g1 in seq(1,g2-1)) {
-						base_tmp	<- sum(seq(0,g2-2)) ;
-					
-						inst_temp$betadiff_sum[[base_tmp + g1]][s1,s2]	<- inst_temp$betadiff_sum[[base_tmp + g1]][s1,s2] / N ;
-						inst_temp$betadiff_sum[[base_tmp + g1]][s1,s2]	<- inst_temp$betadiff_sum[[base_tmp + g1]][s1,s2] * (1 - inst_temp$betadiff_sum[[base_tmp + g1]][s1,s2]) ;	
+				if (G > 1) {
+					for (g2 in seq(2,G)) {
+						for (g1 in seq(1,g2-1)) {
+							base_tmp	<- sum(seq(0,g2-2)) ;
+
+							inst_temp$betadiff_sum[[base_tmp + g1]][s1,s2]	<- inst_temp$betadiff_sum[[base_tmp + g1]][s1,s2] / N ;
+							inst_temp$betadiff_sum[[base_tmp + g1]][s1,s2]	<- inst_temp$betadiff_sum[[base_tmp + g1]][s1,s2] * (1 - inst_temp$betadiff_sum[[base_tmp + g1]][s1,s2]) ;	
+						}
 					}
 				}
 				
@@ -235,24 +237,26 @@ FMGM_StEPS	<- function(data, ind_disc, group, lambda_list, with_prior=FALSE, pri
 				return(return_tmp) ;
 			}, mc.cores=cores))) ;
 
-			res_table[d,4]	<- res_table[d,4] + sum(unlist(mclapply(seq(ncol(beta_ind)), function(j) {
-				s1	<- beta_ind[1,j] ;
-				s2	<- beta_ind[2,j] ;
+			if (G > 1) {
+				res_table[d,4]	<- res_table[d,4] + sum(unlist(mclapply(seq(ncol(beta_ind)), function(j) {
+					s1	<- beta_ind[1,j] ;
+					s2	<- beta_ind[2,j] ;
 
-				var1	<- colnames(X)[s1] ;
-				var2	<- colnames(X)[s2] ;
-			
-				return_tmp	<- 0 ;
+					var1	<- colnames(X)[s1] ;
+					var2	<- colnames(X)[s2] ;
 
-				for (g2 in seq(2,G)) {
-					for (g1 in seq(1,g2-1)) {
-						base_tmp	<- sum(seq(0,g2-2)) ;
-						return_tmp	<- return_tmp + inst_temp$betadiff_sum[[base_tmp + g1]][s1,s2] ;
+					return_tmp	<- 0 ;
+
+					for (g2 in seq(2,G)) {
+						for (g1 in seq(1,g2-1)) {
+							base_tmp	<- sum(seq(0,g2-2)) ;
+							return_tmp	<- return_tmp + inst_temp$betadiff_sum[[base_tmp + g1]][s1,s2] ;
+						}
 					}
-				}
 
-				return(return_tmp) ;
-			}, mc.cores=cores))) ;
+					return(return_tmp) ;
+				}, mc.cores=cores))) ;
+			}
 			
 			rm(beta_ind) ; gc() ;
 		}
@@ -282,28 +286,30 @@ FMGM_StEPS	<- function(data, ind_disc, group, lambda_list, with_prior=FALSE, pri
 			}, mc.cores=cores))) ;
 
 
-			res_table[d,5]	<- res_table[d,5] + sum(unlist(mclapply(seq(nrow(rho_ind)), function(i) {
-				r	<- rho_ind[i,1] ;
-				s	<- rho_ind[i,2] ;
+			if (G > 1) {
+				res_table[d,5]	<- res_table[d,5] + sum(unlist(mclapply(seq(nrow(rho_ind)), function(i) {
+					r	<- rho_ind[i,1] ;
+					s	<- rho_ind[i,2] ;
 
-				var1	<- colnames(Y)[r] ;
-				var2	<- colnames(X)[s] ;
+					var1	<- colnames(Y)[r] ;
+					var2	<- colnames(X)[s] ;
 
-				return_tmp	<- 0 ;
+					return_tmp	<- 0 ;
 
-				for (g2 in seq(2,G)) {
-					for (g1 in seq(1,g2-1)) {
-						base_tmp	<- sum(seq(0,g2-2)) ;
-						
-						inst_temp$rhodiff_sum[[base_tmp + g1]][r,s]	<- inst_temp$rhodiff_sum[[base_tmp + g1]][r,s] / N ;
-						inst_temp$rhodiff_sum[[base_tmp + g1]][r,s]	<- inst_temp$rhodiff_sum[[base_tmp + g1]][r,s] * (1 - inst_temp$rhodiff_sum[[base_tmp + g1]][r,s]) ;	
-							
-						return_tmp	<- return_tmp + inst_temp$rhodiff_sum[[base_tmp + g1]][r,s] ;
+					for (g2 in seq(2,G)) {
+						for (g1 in seq(1,g2-1)) {
+							base_tmp	<- sum(seq(0,g2-2)) ;
+
+							inst_temp$rhodiff_sum[[base_tmp + g1]][r,s]	<- inst_temp$rhodiff_sum[[base_tmp + g1]][r,s] / N ;
+							inst_temp$rhodiff_sum[[base_tmp + g1]][r,s]	<- inst_temp$rhodiff_sum[[base_tmp + g1]][r,s] * (1 - inst_temp$rhodiff_sum[[base_tmp + g1]][r,s]) ;	
+
+							return_tmp	<- return_tmp + inst_temp$rhodiff_sum[[base_tmp + g1]][r,s] ;
+						}
 					}
-				}
-				
-				return(return_tmp) ;
-			}, mc.cores=cores))) ;
+
+					return(return_tmp) ;
+				}, mc.cores=cores))) ;
+			}
 				
 			rm(rho_ind) ;	gc() ;
 		}
@@ -335,30 +341,32 @@ FMGM_StEPS	<- function(data, ind_disc, group, lambda_list, with_prior=FALSE, pri
 			}, mc.cores=cores))) ;
 
 
-			res_table[d,6]	<- res_table[d,6] + sum(unlist(mclapply(seq(ncol(phi_ind)), function(j) {
-				s1	<- phi_ind[1,j] ;
-				s2	<- phi_ind[2,j] ;
+			if (G > 1) {
+				res_table[d,6]	<- res_table[d,6] + sum(unlist(mclapply(seq(ncol(phi_ind)), function(j) {
+					s1	<- phi_ind[1,j] ;
+					s2	<- phi_ind[2,j] ;
 
-				var1	<- colnames(Y)[s1] ;
-				var2	<- colnames(Y)[s2] ;
+					var1	<- colnames(Y)[s1] ;
+					var2	<- colnames(Y)[s2] ;
 
-				return_tmp	<- 0 ;
+					return_tmp	<- 0 ;
 
-				for (g2 in seq(2,G)) {
-					for (g1 in seq(1,g2-1)) {
-						base_tmp	<- sum(seq(0,g2-2)) ;
-					
-						inst_temp$phidiff_sum[[base_tmp + g1]][s1,s2]	<- inst_temp$phidiff_sum[[base_tmp + g1]][s1,s2] / N ;
-						inst_temp$phidiff_sum[[base_tmp + g1]][s1,s2]	<- inst_temp$phidiff_sum[[base_tmp + g1]][s1,s2] * (1 - inst_temp$phidiff_sum[[base_tmp + g1]][s1,s2]) ;	
-						
-						inst_temp$phidiff_sum[[base_tmp + g1]][s2,s1]	<- inst_temp$phidiff_sum[[base_tmp + g1]][s1,s2] ;
-						
-						return_tmp	<- return_tmp + inst_temp$phidiff_sum[[base_tmp + g1]][s1,s2] ;
+					for (g2 in seq(2,G)) {
+						for (g1 in seq(1,g2-1)) {
+							base_tmp	<- sum(seq(0,g2-2)) ;
+
+							inst_temp$phidiff_sum[[base_tmp + g1]][s1,s2]	<- inst_temp$phidiff_sum[[base_tmp + g1]][s1,s2] / N ;
+							inst_temp$phidiff_sum[[base_tmp + g1]][s1,s2]	<- inst_temp$phidiff_sum[[base_tmp + g1]][s1,s2] * (1 - inst_temp$phidiff_sum[[base_tmp + g1]][s1,s2]) ;	
+
+							inst_temp$phidiff_sum[[base_tmp + g1]][s2,s1]	<- inst_temp$phidiff_sum[[base_tmp + g1]][s1,s2] ;
+
+							return_tmp	<- return_tmp + inst_temp$phidiff_sum[[base_tmp + g1]][s1,s2] ;
+						}
 					}
-				}
-				
-				return(return_tmp) ;
-			}, mc.cores=cores))) ;
+
+					return(return_tmp) ;
+				}, mc.cores=cores))) ;
+			}
 			
 			rm(phi_ind) ;	gc() ;
 		}
@@ -367,20 +375,22 @@ FMGM_StEPS	<- function(data, ind_disc, group, lambda_list, with_prior=FALSE, pri
 		res_table[d,2]	<- res_table[d,2] / (G*np_bytype[2]) ;
 		res_table[d,3]	<- res_table[d,3] / (G*np_bytype[3]) ;
 		
-		res_table[d,4]	<- res_table[d,4] / (choose(G,2)*choose(p_x,2)) ;
-		res_table[d,5]	<- res_table[d,5] / (choose(G,2)*p_x*p_y) ;
-		res_table[d,6]	<- res_table[d,6] / (choose(G,2)*choose(p_y,2)) ;
+		if (G > 1) {
+			res_table[d,4]	<- res_table[d,4] / (choose(G,2)*choose(p_x,2)) ;
+			res_table[d,5]	<- res_table[d,5] / (choose(G,2)*p_x*p_y) ;
+			res_table[d,6]	<- res_table[d,6] / (choose(G,2)*choose(p_y,2)) ;
+		}
 		
 		initialize_instmat(inst_temp, cores) ;
 	}
 	
-	colnames(res_table)	<- c("Cont-Cont, intra", "Cont-Disc, intra", "Disc-Disc, intra",
-							"Cont-Cont, inter", "Cont-Disc, inter", "Disc-Disc, inter") ;
+	colnames(res_table)	<- if (G > 1) c("Cont-Cont, intra", "Cont-Disc, intra", "Disc-Disc, intra",
+							"Cont-Cont, inter", "Cont-Disc, inter", "Disc-Disc, inter") else c("Cont-Cont, intra", "Cont-Disc, intra", "Disc-Disc, intra") ;
 	rownames(res_table)	<- as.character(lambda_list) ;
 							
-	lambda_fin	<- numeric(6) ;
+	lambda_fin	<- numeric(if (G > 1) 6 else 3) ;
 	
-	for (j in seq(6)) {
+	for (j in seq_along(lambda_fin)) {
 		if (all(is.nan(res_table[,j]))) next ;
 		if (res_table[1,j] > gamma) {
 			stop(paste0("Instability cutoff not met for the following edges: ", colnames(res_table)[j], "  Please try higher values of the penalization parameters")) ;
