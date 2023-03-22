@@ -9,6 +9,8 @@ require(gplots) ;
 #' @param MGM_list A list of graphs from 2 groups. Usually a result of FMGM main function.
 #' @param sortby Determines the standard of sorting & dendrograms. Either 1, 2, or "diff" (default). 
 #' @param highlight A vector of variable names or indices to highlight
+#' @param tol_polish A threshold for the network edge presence
+#' @param tol_plot Only network edges above this value will be displayed on the heatmap
 #' @param sideColor A named vector determining a sidebar colors. Set NULL to make the colors based on the variable types (discrete/continuous). Default: FALSE (no sidebars)
 #' @param distfun A function for the distances between rows/columns
 #' @param hclustfun A function for hierarchical clustering
@@ -21,7 +23,7 @@ require(gplots) ;
 #' @param ylab Y-axis title, default to none
 #' @param verbose Logical. Should plotting information be printed?
 #' @export
-FMGM_plot <- function(MGM_list, sortby="diff", highlight=c(),
+FMGM_plot <- function(MGM_list, sortby="diff", highlight=c(), tol_polish=1e-12, tol_plot=.01,
 					sideColor = FALSE, distfun = dist, hclustfun = hclust,
 					reorderfun = function(d,w) reorder(d,w),
 					margins = c(2.5,2.5), cexRow = 0.1 + .5/log10(n),
@@ -29,7 +31,7 @@ FMGM_plot <- function(MGM_list, sortby="diff", highlight=c(),
 					verbose = getOption("verbose")) {
 					
 	# Make each MGM into a single norm matrix
-	skel_MGM	<- MGMlist_to_plotskel(MGM_list) ;
+	skel_MGM	<- MGMlist_to_plotskel(MGM_list, tol_polish=tol_polish) ;
 	MGM_intra_1	<- skel_MGM$intra[[1]] ;
 	MGM_intra_2	<- skel_MGM$intra[[2]] ;
 	MGM_inter	<- skel_MGM$inter[[1]] ;
@@ -88,6 +90,10 @@ FMGM_plot <- function(MGM_list, sortby="diff", highlight=c(),
 	MGM_intra_1	<- MGM_intra_1[rowInd, rowInd] ;
 	MGM_intra_2	<- MGM_intra_2[rowInd, rowInd] ;
 	MGM_inter	<- MGM_inter[rowInd, rowInd] ;
+	
+	MGM_intra_1[abs(MGM_intra_1) < tol_plot]        <- 0 ;
+	MGM_intra_2[abs(MGM_intra_2) < tol_plot]        <- 0 ;
+	MGM_inter[abs(MGM_inter) < tol_plot]            <- 0 ;
 	
 	lmat	<- rbind(c(NA,4,NA), c(5,1,3), c(NA,2,6)) ;
 	lwid	<- c(1,4,4) ;
