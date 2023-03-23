@@ -404,115 +404,117 @@ compare_MGMlist	<- function(MGM_list_1, MGM_list_2, tol_polish=1e-12, cores) {
 		}
 	}
 	
-	for (g2 in seq(2,G)) {
-		for (g1 in seq(1,g2-1)) {
-			# Beta
-			if (p_x > 1) {
-				beta_ind	<- combn(p_x, 2) ;
-				
-				beta_compare	<- unlist(mclapply(seq(nrow(beta_ind)), function(j) {
-					s1	<- beta_ind[1,j] ;
-					s2	<- beta_ind[2,j] ;
-					
-					if (abs(MGM_list_1[[g1]]$beta[s1,s2] - MGM_list_1[[g2]]$beta[s1,s2]) <= tol_polish) {
-						sign_1	<- 0 ;
-					} else {
-						sign_1	<- sign(MGM_list_1[[g1]]$beta[s1,s2] - MGM_list_1[[g2]]$beta[s1,s2]) ;
-					}
-					
-					if (abs(MGM_list_2[[g1]]$beta[s1,s2] - MGM_list_2[[g2]]$beta[s1,s2]) <= tol_polish) {
-						sign_2	<- 0 ;
-					} else {
-						sign_2	<- sign(MGM_list_2[[g1]]$beta[s1,s2] - MGM_list_2[[g2]]$beta[s1,s2]) ;
-					}
-					
-					return(sign_1 != sign_2) ;
-				}, mc.cores=cores)) ;
-				
-				rm(beta_ind) ;	gc() ;
+	if (G > 1) {
+		for (g2 in seq(2,G)) {
+			for (g1 in seq(1,g2-1)) {
+				# Beta
+				if (p_x > 1) {
+					beta_ind	<- combn(p_x, 2) ;
 
-#				print(paste0("beta diff difference: ", sum(beta_compare))) ;
-			
-				if (sum(beta_compare) > 0) {
-					diff_ind	<- FALSE ;
+					beta_compare	<- unlist(mclapply(seq(nrow(beta_ind)), function(j) {
+						s1	<- beta_ind[1,j] ;
+						s2	<- beta_ind[2,j] ;
+
+						if (abs(MGM_list_1[[g1]]$beta[s1,s2] - MGM_list_1[[g2]]$beta[s1,s2]) <= tol_polish) {
+							sign_1	<- 0 ;
+						} else {
+							sign_1	<- sign(MGM_list_1[[g1]]$beta[s1,s2] - MGM_list_1[[g2]]$beta[s1,s2]) ;
+						}
+
+						if (abs(MGM_list_2[[g1]]$beta[s1,s2] - MGM_list_2[[g2]]$beta[s1,s2]) <= tol_polish) {
+							sign_2	<- 0 ;
+						} else {
+							sign_2	<- sign(MGM_list_2[[g1]]$beta[s1,s2] - MGM_list_2[[g2]]$beta[s1,s2]) ;
+						}
+
+						return(sign_1 != sign_2) ;
+					}, mc.cores=cores)) ;
+
+					rm(beta_ind) ;	gc() ;
+
+	#				print(paste0("beta diff difference: ", sum(beta_compare))) ;
+
+					if (sum(beta_compare) > 0) {
+						diff_ind	<- FALSE ;
+					}
 				}
-			}
-			
-			# Rho
-			if (p_x > 0 & p_y > 0) {
-				rho_ind		<- expand.grid(seq(p_y), seq(p_x)) ;
-				
-				rho_compare	<- unlist(mclapply(seq(nrow(rho_ind)), function(i) {
-					r	<- rho_ind[i,1] ;
-					s	<- rho_ind[i,2] ;
-					
-					ind_tmp		<- (L_cumsum[r]+1):(L_cumsum[r+1]) ;
-					rho_tmp_11	<- MGM_list_1[[g1]]$rho[ind_tmp, s] ;
-					rho_tmp_12	<- MGM_list_1[[g2]]$rho[ind_tmp, s] ;
-					rho_tmp_21	<- MGM_list_2[[g1]]$rho[ind_tmp, s] ;
-					rho_tmp_22	<- MGM_list_2[[g2]]$rho[ind_tmp, s] ;
-					
-					if (sqrt(mean((rho_tmp_11 - rho_tmp_12)^2)) <= tol_polish) {
-						sign_1	<- 0 ;
-					} else {
-						sign_1	<- 1 ;
-					}
-					
-					if (sqrt(mean((rho_tmp_21 - rho_tmp_22)^2)) <= tol_polish) {
-						sign_2	<- 0 ;
-					} else {
-						sign_2	<- 1 ;
-					}
-					
-					return(sign_1 != sign_2) ;
-				}, mc.cores=cores)) ;
-					
-				rm(rho_ind) ;	gc() ;
 
-# 				print(paste0("rho diff difference: ", sum(rho_compare))) ;
-				
-				if (sum(rho_compare) > 0) {
-					diff_ind	<- FALSE ;
+				# Rho
+				if (p_x > 0 & p_y > 0) {
+					rho_ind		<- expand.grid(seq(p_y), seq(p_x)) ;
+
+					rho_compare	<- unlist(mclapply(seq(nrow(rho_ind)), function(i) {
+						r	<- rho_ind[i,1] ;
+						s	<- rho_ind[i,2] ;
+
+						ind_tmp		<- (L_cumsum[r]+1):(L_cumsum[r+1]) ;
+						rho_tmp_11	<- MGM_list_1[[g1]]$rho[ind_tmp, s] ;
+						rho_tmp_12	<- MGM_list_1[[g2]]$rho[ind_tmp, s] ;
+						rho_tmp_21	<- MGM_list_2[[g1]]$rho[ind_tmp, s] ;
+						rho_tmp_22	<- MGM_list_2[[g2]]$rho[ind_tmp, s] ;
+
+						if (sqrt(mean((rho_tmp_11 - rho_tmp_12)^2)) <= tol_polish) {
+							sign_1	<- 0 ;
+						} else {
+							sign_1	<- 1 ;
+						}
+
+						if (sqrt(mean((rho_tmp_21 - rho_tmp_22)^2)) <= tol_polish) {
+							sign_2	<- 0 ;
+						} else {
+							sign_2	<- 1 ;
+						}
+
+						return(sign_1 != sign_2) ;
+					}, mc.cores=cores)) ;
+
+					rm(rho_ind) ;	gc() ;
+
+	# 				print(paste0("rho diff difference: ", sum(rho_compare))) ;
+
+					if (sum(rho_compare) > 0) {
+						diff_ind	<- FALSE ;
+					}
 				}
-			}
-			
-			# Phi
-			if (p_y > 1) {
-				phi_ind		<- combn(p_y, 2) ;
-				
-				phi_compare	<- unlist(mclapply(seq(ncol(phi_ind)), function(j) {
-					s1	<- phi_ind[1,j] ;
-					s2	<- phi_ind[2,j] ;
 
-					ind_tmp_1	<- (L_cumsum[s1]+1):(L_cumsum[s1+1]) ;
-					ind_tmp_2	<- (L_cumsum[s2]+1):(L_cumsum[s2+1]) ;
-						
-					phi_tmp_11	<- MGM_list_1[[g1]]$phi[ind_tmp_1, ind_tmp_2] ;
-					phi_tmp_12	<- MGM_list_1[[g2]]$phi[ind_tmp_1, ind_tmp_2] ;
-					phi_tmp_21	<- MGM_list_2[[g1]]$phi[ind_tmp_1, ind_tmp_2] ;
-					phi_tmp_22	<- MGM_list_2[[g2]]$phi[ind_tmp_1, ind_tmp_2] ;
-					
-					if (sqrt(mean((phi_tmp_11 - phi_tmp_12)^2)) <= tol_polish) {
-						sign_1	<- 0 ;
-					} else {
-						sign_1	<- 1 ;
-					}
-					
-					if (sqrt(mean((phi_tmp_21 - phi_tmp_22)^2)) <= tol_polish) {
-						sign_2	<- 0 ;
-					} else {
-						sign_2	<- 1 ;
-					}
-					
-					return(sign_1 != sign_2) ;
-				}, mc.cores=cores)) ;
-				
-				rm(phi_ind) ;	gc() ;
+				# Phi
+				if (p_y > 1) {
+					phi_ind		<- combn(p_y, 2) ;
 
-#				print(paste0("phi diff difference: ", sum(phi_compare))) ;
-				
-				if (sum(phi_compare) > 0) {
-					diff_ind	<- FALSE ;
+					phi_compare	<- unlist(mclapply(seq(ncol(phi_ind)), function(j) {
+						s1	<- phi_ind[1,j] ;
+						s2	<- phi_ind[2,j] ;
+
+						ind_tmp_1	<- (L_cumsum[s1]+1):(L_cumsum[s1+1]) ;
+						ind_tmp_2	<- (L_cumsum[s2]+1):(L_cumsum[s2+1]) ;
+
+						phi_tmp_11	<- MGM_list_1[[g1]]$phi[ind_tmp_1, ind_tmp_2] ;
+						phi_tmp_12	<- MGM_list_1[[g2]]$phi[ind_tmp_1, ind_tmp_2] ;
+						phi_tmp_21	<- MGM_list_2[[g1]]$phi[ind_tmp_1, ind_tmp_2] ;
+						phi_tmp_22	<- MGM_list_2[[g2]]$phi[ind_tmp_1, ind_tmp_2] ;
+
+						if (sqrt(mean((phi_tmp_11 - phi_tmp_12)^2)) <= tol_polish) {
+							sign_1	<- 0 ;
+						} else {
+							sign_1	<- 1 ;
+						}
+
+						if (sqrt(mean((phi_tmp_21 - phi_tmp_22)^2)) <= tol_polish) {
+							sign_2	<- 0 ;
+						} else {
+							sign_2	<- 1 ;
+						}
+
+						return(sign_1 != sign_2) ;
+					}, mc.cores=cores)) ;
+
+					rm(phi_ind) ;	gc() ;
+
+	#				print(paste0("phi diff difference: ", sum(phi_compare))) ;
+
+					if (sum(phi_compare) > 0) {
+						diff_ind	<- FALSE ;
+					}
 				}
 			}
 		}
