@@ -1,5 +1,10 @@
 Package: fusedMGM
 Type: Package
 Title: R implementation of fused MGM to infer 2-class networks
-Version: 0.0.1.0
-RoxygenNote: 7.2.2
+Version: 0.1.0.0
+RoxygenNote: 7.2.3
+Maintainer: Jaehyun Park <J.31.Park@gmail.com>
+Author: Jaehyun Park, Sungho Won
+License: MIT
+Imports: fastDummies, Rcpp, parallel, bigmemory, bigalgebra, biganalytics, plotrix, gplots
+Description: This package implements fused Markov graphical model (FMGM; Park and Won, 2021). The functions include building MGM objects from data, inference of networks using FMGM, StEPS for the determination of penalization parameters, and the visualization.
