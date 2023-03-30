@@ -9,6 +9,8 @@ FMGM_plot(
   MGM_list,
   sortby = "diff",
   highlight = c(),
+  tol_polish = 1e-12,
+  tol_plot = 0.01,
   sideColor = FALSE,
   distfun = dist,
   hclustfun = hclust,
@@ -28,6 +30,10 @@ FMGM_plot(
 \item{sortby}{Determines the standard of sorting & dendrograms. Either 1, 2, or "diff" (default).}
 
 \item{highlight}{A vector of variable names or indices to highlight}
+
+\item{tol_polish}{A threshold for the network edge presence}
+
+\item{tol_plot}{Only network edges above this value will be displayed on the heatmap}
 
 \item{sideColor}{A named vector determining a sidebar colors. Set NULL to make the colors based on the variable types (discrete/continuous). Default: FALSE (no sidebars)}
 

@@ -51,6 +51,8 @@ FMGM_mc(
 
 \item{prior_list}{List of prior information. Each element must be a 3-column data frames, with the 1st and the 2nd columns being variable names and the 3rd column being prior confidence (0,1)}
 
+\item{converge_by_edge}{Logical. The convergence should be judged by null differences of network edges after iteration. If FALSE, the rooted mean square difference (RMSD) of edge weights is used. Default: TRUE}
+
 \item{tol_edge}{Integer. Number of consecutive iterations of convergence to stop the iteration. Default: 3}
 
 \item{tol_mgm}{Numeric. Cutoff of network edge RMSD for convergence. Default: 1e-04}
@@ -68,8 +70,6 @@ FMGM_mc(
 \item{cores}{Integer. Number of cores to use multi-core utilization. Default: maximum number of available cores}
 
 \item{verbose}{Logical. If TRUE, the procedures are reported in real-time manner. Default: FALSE}
-
-\item{convergence_by_edge}{Logical. The convergence should be judged by null differences of network edges after iteration. If FALSE, the rooted mean square difference (RMSD) of edge weights is used. Default: TRUE}
 }
 \value{
 The resulting networks, in the form of a list of MGMs

@@ -29,6 +29,8 @@ FMGM_StEPS(
 
 \item{group}{Group indices, must be provided with the observation names}
 
+\item{lambda_list}{Vector with numeric variables. Penalization parameter candidates}
+
 \item{with_prior}{Logical. Is prior information provided? Default: FALSE}
 
 \item{prior_list}{List of prior information. Each element must be a 3-column data frames, with the 1st and the 2nd columns being variable names and the 3rd column being prior confidence (0,1)}
@@ -50,8 +52,6 @@ FMGM_StEPS(
 \item{cores}{Integer. Number of cores to use multi-core utilization. Default: maximum number of available cores}
 
 \item{verbose}{Logical. If TRUE, the procedures are reported in real-time manner. Default: FALSE}
-
-\item{lambda_intra}{Vector with numeric variables. Penalization parameter candidates}
 }
 \value{
 The resulting networks, in the form of a list of MGMs
