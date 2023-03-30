@@ -242,7 +242,7 @@ make_MGM_list	<- function(X, Y, group) {
 #' @param lambda_inter Vector with 3 numeric variables. Penalization parameters for network edge weight differences
 #' @param with_prior Logical. Is prior information provided? Default: FALSE
 #' @param prior_list List of prior information. Each element must be a 3-column data frames, with the 1st and the 2nd columns being variable names and the 3rd column being prior confidence (0,1)
-#' @param convergence_by_edge Logical. The convergence should be judged by null differences of network edges after iteration. If FALSE, the rooted mean square difference (RMSD) of edge weights is used. Default: TRUE
+#' @param converge_by_edge Logical. The convergence should be judged by null differences of network edges after iteration. If FALSE, the rooted mean square difference (RMSD) of edge weights is used. Default: TRUE
 #' @param tol_edge Integer. Number of consecutive iterations of convergence to stop the iteration. Default: 3
 #' @param tol_mgm Numeric. Cutoff of network edge RMSD for convergence. Default: 1e-04
 #' @param tol_g Numeric. Cutoff of iternations in prox-grad map calculation. Default: 5e-03

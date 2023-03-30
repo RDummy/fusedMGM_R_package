@@ -14,7 +14,7 @@ require(biganalytics) ;
 #' @param data Data frame with rows as observations and columns as variables
 #' @param ind_disc Indices of discrete variables
 #' @param group Group indices, must be provided with the observation names
-#' @param lambda_intra Vector with numeric variables. Penalization parameter candidates
+#' @param lambda_list Vector with numeric variables. Penalization parameter candidates
 #' @param with_prior Logical. Is prior information provided? Default: FALSE
 #' @param prior_list List of prior information. Each element must be a 3-column data frames, with the 1st and the 2nd columns being variable names and the 3rd column being prior confidence (0,1)
 #' @param N Integer. Number of subsamples to use. Default: 20
