@@ -13,6 +13,9 @@ MGM(X, Y, g)
 
 \item{g}{group index, needed for temporary files}
 }
+\value{
+An S3 `MGM` object, containing data, network parameters, and the 1st derivatives
+}
 \description{
 Defining S3 object "MGM"
 }

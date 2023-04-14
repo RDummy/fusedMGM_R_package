@@ -13,6 +13,9 @@ make_MGM_list(X, Y, group)
 
 \item{group}{group variable vector, with the sample names}
 }
+\value{
+A list of MGM objects. The length is equal to the unique number of groups.
+}
 \description{
 Make MGM lists from input data
 }

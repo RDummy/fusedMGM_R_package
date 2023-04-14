@@ -57,6 +57,30 @@ FMGM_plot(
 
 \item{verbose}{Logical. Should plotting information be printed?}
 }
+\value{
+None
+}
 \description{
 This function is written based on R base function 'heatmap'.
+}
+\examples{
+\donttest{
+data(data_all) ;  # Example 500-by-100 simulation data
+data(ind_disc) ;
+
+group <- rep(c(1,2), each=250) ;
+names(group) <- seq(500) ;
+
+if (Sys.info()['sysname'] == 'Windows') {
+  cores=1
+} else {
+  cores=parallel::detectCores() ;
+}
+
+res_FMGM <- FMGM_mc(data_all, ind_disc, group, 
+                    lambda_intra=c(0.2,0.15,0.1), lambda_inter=c(0.2,0.15,0.1), 
+                    cores=cores, verbose=TRUE)
+                    
+FMGM_plot(res_FMGM)
+}
 }
