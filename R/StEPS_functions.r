@@ -27,6 +27,27 @@ require(biganalytics) ;
 #' @param cores Integer. Number of cores to use multi-core utilization. Default: maximum number of available cores
 #' @param verbose Logical. If TRUE, the procedures are reported in real-time manner. Default: FALSE
 #' @return The resulting networks, in the form of a list of MGMs
+#' @examples
+#' \donttest{
+#' data(data_all) ;  # Example 500-by-100 simulation data
+#' data(ind_disc) ;
+#' 
+#' group <- rep(c(1,2), each=250) ;
+#' names(group) <- seq(500) ;
+#' 
+#' if (Sys.info()['sysname'] == 'Windows') {
+#'   cores=1
+#' } else {
+#'   cores=parallel::detectCores() ;
+#' }
+#' 
+#' lambda_list <- 2^seq(log2(.08), log2(.32), length.out=7) ;
+#' lambda_list <- sort(lambda_list, decreasing=TRUE) ;
+#' 
+#' res_steps <- FMGM_StEPS(data_all, ind_disc, group, 
+#'                     lambda_list=lambda_list, 
+#'                     cores=cores, verbose=TRUE)
+#' }
 #' @export
 FMGM_StEPS	<- function(data, ind_disc, group, lambda_list, with_prior=FALSE, prior_list=NULL, 
 						N=20, b=NULL, gamma=.05, perm=10000, eps=.05, tol_polish=1e-12, ..., cores=parallel::detectCores(), verbose=FALSE) {

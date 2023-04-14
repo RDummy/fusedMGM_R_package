@@ -10,6 +10,8 @@ require(biganalytics) ;
 #' @param X data frame or matrix of continuous variables (row: observation, column: variable)
 #' @param Y data frame or matrix of discrete variables (row: observation, column: variable)
 #' @param g group index, needed for temporary files
+#' @return An S3 `MGM` object, containing data, network parameters, and the 1st derivatives
+#' @import bigmemory
 #' @export
 MGM	<- function(X, Y, g) {
 	input_missing	<- missing(X) | missing(Y) ;
@@ -118,6 +120,7 @@ MGM	<- function(X, Y, g) {
 #' @param X data frame or matrix of continuous variables (row: observation, column: variable)
 #' @param Y data frame or matrix of discrete variables (row: observation, column: variable)
 #' @param group group variable vector, with the sample names
+#' @return A list of MGM objects. The length is equal to the unique number of groups.
 #' @export
 make_MGM_list	<- function(X, Y, group) {
 							
@@ -253,6 +256,29 @@ make_MGM_list	<- function(X, Y, group) {
 #' @param cores Integer. Number of cores to use multi-core utilization. Default: maximum number of available cores
 #' @param verbose Logical. If TRUE, the procedures are reported in real-time manner. Default: FALSE
 #' @return The resulting networks, in the form of a list of MGMs
+#' @import bigmemory
+#' @importFrom utils combn
+#' @importFrom stats rnorm
+#' @importFrom stats pnorm
+#' @importFrom parallel mclapply
+#' @examples
+#' \donttest{
+#' data(data_all) ;  # Example 500-by-100 simulation data
+#' data(ind_disc) ;
+#' 
+#' group <- rep(c(1,2), each=250) ;
+#' names(group) <- seq(500) ;
+#' 
+#' if (Sys.info()['sysname'] == 'Windows') {
+#'   cores=1
+#' } else {
+#'   cores=parallel::detectCores() ;
+#' }
+#' 
+#' res_FMGM <- FMGM_mc(data_all, ind_disc, group, 
+#'                     lambda_intra=c(0.2,0.15,0.1), lambda_inter=c(0.2,0.15,0.1), 
+#'                     cores=cores, verbose=TRUE)
+#' }
 #' @export
 FMGM_mc	<- function(data, ind_disc, group, t=1, L=NULL, eta=2, lambda_intra, lambda_intra_prior=NULL, lambda_inter, 
 					with_prior=FALSE, prior_list=NULL, converge_by_edge=TRUE, tol_edge=3,
@@ -310,6 +336,8 @@ FMGM_mc	<- function(data, ind_disc, group, t=1, L=NULL, eta=2, lambda_intra, lam
 			pr_get	<- sapply(info_tmp, function(mat) return(!is.na(mat[ind_1,ind_2]))) ;
 			if (any(pr_get))	wp[ind_1,ind_2]	<- wp[ind_2,ind_1]	<- 1 ;
 		}, mc.cores=cores) ;
+	} else {
+	  wp = NULL ;
 	}
 	
 	learn_res	<- learn_tb(MGM_list, t, L, eta, lambda_intra, lambda_intra_prior, lambda_inter,

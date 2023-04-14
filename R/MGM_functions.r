@@ -411,7 +411,7 @@ compare_MGMlist	<- function(MGM_list_1, MGM_list_2, tol_polish=1e-12, cores) {
 				if (p_x > 1) {
 					beta_ind	<- combn(p_x, 2) ;
 
-					beta_compare	<- unlist(mclapply(seq(nrow(beta_ind)), function(j) {
+					beta_compare	<- unlist(mclapply(seq(ncol(beta_ind)), function(j) {
 						s1	<- beta_ind[1,j] ;
 						s2	<- beta_ind[2,j] ;
 

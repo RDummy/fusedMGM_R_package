@@ -297,7 +297,7 @@ movepoints	<- function(MGM_get, MGM_init, coef, cores) {
 		if (p_x > 0) {
 			rat_tmp	<- c(rat_tmp, unlist(mclapply(seq(p_x), function(s) {
 				if (MGM_g$beta[s,s] < 0) {
-					return(MGM_i$d_beta[s,s]/(L*diag(MGM_i$beta[s,s]))) ;
+					return(MGM_i$d_beta[s,s]/((1/coef)*diag(MGM_i$beta[s,s]))) ;
 				} else {
 					return(NULL) ;
 				}
