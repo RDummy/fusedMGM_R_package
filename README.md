@@ -1,9 +1,8 @@
 # fusedMGM_R_package
 
+The package is currently available at CRAN.
 To use the package, use the following R code
 
 ```{r, include = FALSE}
-install.packages("devtools")
-library(devtools)
-install_github("JaehyunParkBiostat/fusedMGM_R_package")
+install.packages("fusedMGM")
 ```
