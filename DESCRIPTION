@@ -1,7 +1,7 @@
 Package: fusedMGM
 Type: Package
 Title: Implementation of Fused MGM to Infer 2-Class Networks
-Version: 0.1.0.0
+Version: 0.1.0.1
 RoxygenNote: 7.2.3
 Maintainer: Jaehyun Park <J.31.Park@gmail.com>
 Authors@R: c(person(given="Jaehyun", family="Park", email="J.31.Park@gmail.com",
