@@ -247,8 +247,8 @@ make_MGM_list	<- function(X, Y, group) {
 #' @param prior_list List of prior information. Each element must be a 3-column data frames, with the 1st and the 2nd columns being variable names and the 3rd column being prior confidence (0,1)
 #' @param converge_by_edge Logical. The convergence should be judged by null differences of network edges after iteration. If FALSE, the rooted mean square difference (RMSD) of edge weights is used. Default: TRUE
 #' @param tol_edge Integer. Number of consecutive iterations of convergence to stop the iteration. Default: 3
-#' @param tol_mgm Numeric. Cutoff of network edge RMSD for convergence. Default: 1e-04
-#' @param tol_g Numeric. Cutoff of iternations in prox-grad map calculation. Default: 5e-03
+#' @param tol_mgm Numeric. Cutoff of network edge RMSD for convergence. Default: 1e-05
+#' @param tol_g Numeric. Cutoff of iternations in prox-grad map calculation. Default: 1e-05
 #' @param tol_fpa Numeric. Cutoff for fixed-point approach. Default: 1e-12
 #' @param maxit Integer. Maximum number of iterations in fixed-point approach. Default: 1000000
 #' @param polish Logical. Should the edges with the weights below the cutoff should be discarded? Default: TRUE
@@ -282,7 +282,7 @@ make_MGM_list	<- function(X, Y, group) {
 #' @export
 FMGM_mc	<- function(data, ind_disc, group, t=1, L=NULL, eta=2, lambda_intra, lambda_intra_prior=NULL, lambda_inter, 
 					with_prior=FALSE, prior_list=NULL, converge_by_edge=TRUE, tol_edge=3,
-					tol_mgm=1e-04, tol_g=5e-03, tol_fpa=1e-12, maxit=1000000, 
+					tol_mgm=1e-05, tol_g=1e-05, tol_fpa=1e-12, maxit=1000000, 
 					polish=TRUE, tol_polish=1e-12, 
 					cores=parallel::detectCores(), verbose=FALSE){
 
