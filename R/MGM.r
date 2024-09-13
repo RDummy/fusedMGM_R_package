@@ -43,18 +43,21 @@ MGM	<- function(X, Y, g) {
 	
 	# Convert discrete data into a dummy matrix
 	# Define list & number of unique levels of discrete variables
-    L_y		<- numeric(p_y) ;
+	L_y		<- numeric(p_y) ;
 	Y_dummy	<- fastDummies::dummy_cols(Y, remove_selected_columns=TRUE) ;
 	
 	levels_y	<- list() ;
 	L_cumsum	<- numeric(p_y + 1) ;
 	L_cumsum[1]	<- 0 ;
-    for (r in seq(p_y)) {
-		varname			<- colnames(Y)[r] ;
-		L_y[r]			<- length(unique(Y[,r])) ;
+			 
+	for (r in seq(p_y)) {
+		varname		<- colnames(Y)[r] ;
+		L_y[r]		<- length(unique(Y[,r])) ;
 		L_cumsum[r+1]	<- L_cumsum[r] + L_y[r] ;
-        levels_y[[r]]	<- gsub(paste0(varname, "_"), "", colnames(Y_dummy)[(L_cumsum[r]+1):(L_cumsum[r+1])], fixed=TRUE) ;
+	
+		levels_y[[r]]	<- gsub(paste0(varname, "_"), "", colnames(Y_dummy)[(L_cumsum[r]+1):(L_cumsum[r+1])], fixed=TRUE) ;
 	}
+	
 	L_sum	<- sum(L_y) ;
 	Y_dummy	<- as.matrix(Y_dummy) ;
 	mode(Y_dummy)	<- "double" ;
@@ -62,10 +65,11 @@ MGM	<- function(X, Y, g) {
 	rownames(Y_dummy)	<- rownames(Y) ;
     
 	# Convert discrete data into level indices
-    Y_lev	<- matrix(0, nrow=n_y, ncol=p_y) ;
-    for (n in seq(n_y)) { for (r in seq(p_y)) {
+	Y_lev	<- matrix(0, nrow=n_y, ncol=p_y) ;
+	for (n in seq(n_y)) { for (r in seq(p_y)) {
 		Y_lev[n,r]	<- match(as.character(Y[n,r]), levels_y[[r]]) ;
 	}}
+	
 	Y_lev	<- as.big.matrix(Y_lev) ;
 	colnames(Y_lev)	<- colnames(Y) ;
 	rownames(Y_lev)	<- rownames(Y) ;
@@ -167,14 +171,14 @@ make_MGM_list	<- function(X, Y, group) {
 		for (r in ind_y) {
 			# Note: levels with singleton will be ignored
 			lev_uniq	<- Reduce(intersect, lapply(Y_list, function(y) {
-																tab_uniq	<- table(y[,r]) ;
-																levlist		<- names(tab_uniq)[tab_uniq > 1] ;
-																return(levlist) ;
-																})) ;
+											tab_uniq	<- table(y[,r]) ;
+											levlist		<- names(tab_uniq)[tab_uniq > 1] ;
+											return(levlist) ;
+											})) ;
 			
 			if (length(lev_uniq) <= 1) {	# 1 or less common level: drop the variable
 				drop_y	<- c(drop_y, r) ;
-			} else {						# Else, drop samples not in the common levels
+			} else {			# Else, drop samples not in the common levels
 			
 				for (g in seq(G)) {
 					y	<- Y_list[[g]] ;
