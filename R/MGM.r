@@ -266,20 +266,39 @@ make_MGM_list	<- function(X, Y, group) {
 #' @importFrom stats pnorm
 #' @importFrom parallel mclapply
 #' @examples
-#' \donttest{
+#' chk <- tolower(Sys.getenv("_R_CHECK_LIMIT_CORES_", ""))
+#' 
+#' if (Sys.info()['sysname'] != 'Linux') {
+#'   cores=1L
+#' } else {
+#'   chk = tolower(Sys.getenv("_R_CHECK_LIMIT_CORES_", ""))
+#'   if (nzchar(chk) && (chk != "false")) {
+#'     cores=2L
+#'   } else {
+#'     cores=parallel::detectCores() - 1 ;
+#'   }
+#' }
+#' 
+#' \dontrun{
 #' data(data_all) ;  # Example 500-by-100 simulation data
 #' data(ind_disc) ;
 #' 
 #' group <- rep(c(1,2), each=250) ;
-#' names(group) <- seq(500) ;
-#' 
-#' if (Sys.info()['sysname'] == 'Windows') {
-#'   cores=1
-#' } else {
-#'   cores=parallel::detectCores() ;
-#' }
+#' names(group) <- rownames(data_all) ;
 #' 
 #' res_FMGM <- FMGM_mc(data_all, ind_disc, group, 
+#'                     lambda_intra=c(0.2,0.15,0.1), lambda_inter=c(0.2,0.15,0.1), 
+#'                     cores=cores, verbose=TRUE)
+#' }
+#' 
+#' \donttest{
+#' data(data_mini) ; # Minimal example 500-by-10 simulation data
+#' data(ind_disc_mini) ;
+#' 
+#' group <- rep(c(1,2), each=250) ;
+#' names(group) <- rownames(data_mini) ;
+#' 
+#' res_FMGM_mini <- FMGM_mc(data_mini, ind_disc_mini, group, 
 #'                     lambda_intra=c(0.2,0.15,0.1), lambda_inter=c(0.2,0.15,0.1), 
 #'                     cores=cores, verbose=TRUE)
 #' }
